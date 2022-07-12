@@ -4,8 +4,8 @@
   - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem)
   - [Mehre Linien in die Konsole ausgeben:](#mehre-linien-in-die-konsole-ausgeben)
   - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem-1)
-  - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem-2)
-  - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem-3)
+  - [Input erhalten:](#input-erhalten)
+  - [Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind](#durch-mehrere-argumente-iterieren-und-checken-ob-diese-eine-datei-oder-ein-ordner-sind)
   - [PID eines ausgeführten Befehls herausfinden](#pid-eines-ausgeführten-befehls-herausfinden)
   - [Weitere Tipps](#weitere-tipps)
     - [ShellCheck](#shellcheck)
@@ -36,18 +36,23 @@ echo "Enter file/directory name:"
 read file1
 ```
 
-## Variable mit Strings verwendem:
-
+## Input erhalten:
+Mit folgendem Script kann man einen einen Input abfragen und dann erneut ausgeben: 
 ```sh
-hostname=`hostname`
-echo "Dieses Skript läuft auf $hostname."
+read input
+echo "$input"
 ```
 
-## Variable mit Strings verwendem:
-
+## Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind
 ```sh
-hostname=`hostname`
-echo "Dieses Skript läuft auf $hostname."
+for var in "$@"
+do
+    if [[ -d $var ]]||[[ -f $var ]]; then #checks if $var is file or dir
+        file $var
+    else 
+        echo "there is no file/dir named $var"
+    fi
+done
 ```
 
 
