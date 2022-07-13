@@ -1,11 +1,17 @@
 # Zusammenfassung
 
 - [Zusammenfassung](#zusammenfassung)
-  - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem)
-  - [Mehre Linien in die Konsole ausgeben:](#mehre-linien-in-die-konsole-ausgeben)
-  - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem-1)
-  - [Input erhalten:](#input-erhalten)
-  - [Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind](#durch-mehrere-argumente-iterieren-und-checken-ob-diese-eine-datei-oder-ein-ordner-sind)
+  - [Basics](#basics)
+    - [Hello World](#hello-world)
+    - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem)
+    - [Mehre Linien in die Konsole ausgeben:](#mehre-linien-in-die-konsole-ausgeben)
+    - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem-1)
+    - [Input erhalten:](#input-erhalten)
+  - [Zahlen Rater](#zahlen-rater)
+  - [Umgang mit Dateien](#umgang-mit-dateien)
+    - [Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind](#durch-mehrere-argumente-iterieren-und-checken-ob-diese-eine-datei-oder-ein-ordner-sind)
+    - [Zip Cracker:](#zip-cracker)
+    - [Text Processing](#text-processing)
   - [PID eines ausgeführten Befehls herausfinden](#pid-eines-ausgeführten-befehls-herausfinden)
   - [Weitere Tipps](#weitere-tipps)
     - [ShellCheck](#shellcheck)
@@ -16,34 +22,64 @@
       - [Exit Status automatisch checken](#exit-status-automatisch-checken)
       - [Bei nicht gesetzten Variablen das Script beenden](#bei-nicht-gesetzten-variablen-das-script-beenden)
 
-## Variable mit Strings verwendem:
+## Basics
+
+### Hello World
+TODO
+
+
+### Variable mit Strings verwendem:
 
 ```sh
 hostname=`hostname`
 echo "Dieses Skript läuft auf $hostname."
 ```
 
-## Mehre Linien in die Konsole ausgeben:
-Mit ```\n``` kann man Zeilen vonseinander trennen und somit mehrere Zeilen mit einem echo ausgeben.
+### Mehre Linien in die Konsole ausgeben:
+Mit `\n` kann man Zeilen vonseinander trennen und somit mehrere Zeilen mit einem echo ausgeben.
 ```sh
 printf "Mensch\nBär\nSchwein\nHund\nKatze\nSchaf"
 ```
 
-## Variable mit Strings verwendem:
+### Variable mit Strings verwendem:
 
 ```sh
 echo "Enter file/directory name:"
 read file1
 ```
 
-## Input erhalten:
+### Input erhalten:
 Mit folgendem Script kann man einen einen Input abfragen und dann erneut ausgeben: 
 ```sh
 read input
 echo "$input"
 ```
 
-## Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind
+## Zahlen Rater
+Dies ist eine Zahlen Rater, welcher eine zufällige Zahl generiert und dann einen Input erwartet. Wenn der Benutzer die richtige Zahl ratet beendet sich das Spiel. 
+```sh
+random_number=$((RANDOM%15+1)) #generate random number
+
+echo "Guess a input between 1 and 15:"
+read input
+
+while [ $input -ne $random_number ]
+do
+  if [ $input -gt $random_number ]
+  then
+    echo "Your guess is higher than the number input"
+  else
+    echo "Your guess is lower than the number input"
+  fi
+  echo "Guess again:"
+  read input
+done
+echo "You guessed the correct input"
+```
+
+## Umgang mit Dateien
+
+###  Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind
 ```sh
 for var in "$@"
 do
@@ -55,9 +91,17 @@ do
 done
 ```
 
+### Zip Cracker:
+TODO
+
+### Text Processing
+TODO
+
+
+
 
 ## PID eines ausgeführten Befehls herausfinden
-Mit ```$!``` findet man immmer heraus was die PID des zu letzt audgeführten Befehls ist.
+Mit `$!` findet man immmer heraus was die PID des zu letzt audgeführten Befehls ist.
 ```bash
 myCommand & echo $!
 ```
