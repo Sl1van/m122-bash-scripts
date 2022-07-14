@@ -6,9 +6,11 @@
     - [Variable mit Strings verwenden:](#variable-mit-strings-verwenden)
     - [Mehre Linien in die Konsole ausgeben:](#mehre-linien-in-die-konsole-ausgeben)
     - [Input erhalten:](#input-erhalten)
+    - [Einen bestimmten Exit-Status generieren](#einen-bestimmten-exit-status-generieren)
   - [Zahlen Rater](#zahlen-rater)
   - [Umgang mit Dateien](#umgang-mit-dateien)
     - [Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind](#durch-mehrere-argumente-iterieren-und-checken-ob-diese-eine-datei-oder-ein-ordner-sind)
+    - [Anzahl Dateien in Ordner zählen:](#anzahl-dateien-in-ordner-zählen)
     - [Zip Cracker:](#zip-cracker)
       - [Master Script](#master-script)
       - [Brute-Force Scripts](#brute-force-scripts)
@@ -17,6 +19,8 @@
     - [Umgestalten einer Tarifliste](#umgestalten-einer-tarifliste)
   - [Weiteres](#weiteres)
     - [PID eines ausgeführten Befehls herausfinden](#pid-eines-ausgeführten-befehls-herausfinden)
+  - [Fortgeschrittene Scripts](#fortgeschrittene-scripts)
+    - [Dateien anhand der Dateiendung umbenennen](#dateien-anhand-der-dateiendung-umbenennen)
   - [Best Practices](#best-practices)
     - [Runtime Fehler generieren](#runtime-fehler-generieren)
     - [Mit trap checken, ob ein Script einen bestimmten Fehler warf](#mit-trap-checken-ob-ein-script-einen-bestimmten-fehler-warf)
@@ -69,6 +73,13 @@ read input
 echo "$input"
 ```
 
+### Einen bestimmten Exit-Status generieren
+
+```sh
+echo “Dieses script wird mit exit status 1 beendet werden.”
+exit 1
+```
+
 ## Zahlen Rater
 
 Dies ist eine Zahlen Rater, welcher eine zufällige Zahl generiert und dann einen Input erwartet. Wenn der Benutzer die richtige Zahl ratet beendet sich das Spiel.
@@ -106,6 +117,19 @@ do
         echo "there is no file/dir named $var"
     fi
 done
+```
+
+### Anzahl Dateien in Ordner zählen:
+
+```sh
+#!/bin/bash
+
+function countFiles()
+ {
+   local NUMBER_OF_FILES=$(ls -l | wc -l)
+    echo "$NUMBER_OF_FILES"
+ }
+countFiles
 ```
 
 ### Zip Cracker:
@@ -266,6 +290,34 @@ Mit `$!` findet man immer heraus was die PID des zuletzt ausgeführten Befehls i
 myCommand & echo $!
 ```
 
+## Fortgeschrittene Scripts
+
+### Dateien anhand der Dateiendung umbenennen
+
+```sh
+function rename_files_custom {
+  for file in *; do
+    if [ -f $file ]; then
+      if [[ $file == *$1 ]]; then
+        if [ -z $2 ]; then
+          new_name=$(date +%Y-%m-%d)-$file
+          mv $file $new_name
+        else
+          new_name=$2-$file
+          mv $file $new_name
+        fi
+      fi
+    fi
+  done
+}
+
+echo "Please enter a file extension"
+read extension
+echo "Please enter a custom prefix or leave empty"
+read prefix
+rename_files_custom $extension $prefix
+```
+
 ## Best Practices
 
 ### Runtime Fehler generieren
@@ -406,10 +458,208 @@ Dieses Flag kann man folgenderweise zurücksetzen:
 set +u
 ```
 
-| Operator | Description                                                                                                    | Example                  |
-| -------- | -------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| =        | Checks if the value of two operands are equal or not; if yes, then the condition becomes true.                 | [ $a = $b ] is not true. |
-| !=       | Checks if the value of two operands are equal or not; if values are not equal then the condition becomes true. | [ $a != $b ] is true.    |
-| -z       | Checks if the given string operand size is zero; if it is zero length, then it returns true.                   | [ -z $a ] is not true.   |
-| -n       | Checks if the given string operand size is non-zero; if it is nonzero length, then it returns true.            | [ -n $a ] is not false.  |
-| str      | Checks if str is not the empty string; if it is empty, then it returns false.                                  | [ $a ] is not false.     |
+https://tableconvert.com/excel-to-markdown
+
+| Operator                                   | Beschreibung                                    | Beispiel                        |
+|--------------------------------------------|-------------------------------------------------|---------------------------------|
+| Compare integers - single brackets []      |                                                 |                                 |
+| -gt                                        | Grösser wie                                     | if [ "$a" -gt "$b" ]            |
+| -ge                                        | Grösser oder gleich wie                         | if [ "$a" -ge "$b" ]            |
+| -lt                                        | Kleiner wie                                     | if [ "$a" -lt "$b" ]            |
+| -le                                        | Kleiner oder gleich wie                         | if [ "$a" -le "$b" ]            |
+| -eq                                        | Gleich                                          | if [ "$a" -eq "$b" ]            |
+| -ne                                        | Ungleich                                        | if [ "$a" -ne "$b" ]            |
+| Compare integers - double parentheses (()) |                                                 |                                 |
+| >                                          | Grösser wie                                     | (("$a" > "$b"))                 |
+| >=                                         | Grösser oder gleich wie                         | (("$a" >= "$b"))                |
+| <                                          | Kleiner wie                                     | (("$a" < "$b"))                 |
+| <=                                         | Kleiner oder gleich wie                         | (("$a" <= "$b"))                |
+| String                                     |                                                 |                                 |
+| =                                          | Gleich                                          | if [ "$a" = "$b" ]              |
+| !=                                         | Ungleich                                        | if [ "$a" != "$b" ]             |
+| -z                                         | Leerer String                                   | if [ -z "$String" ]             |
+| -n                                         | Not null                                        | if [ -n "$String" ]             |
+| File Operators                             |                                                 |                                 |
+| -e                                         | Überprüft ob die Datei / directory exists       | if [ -e $filename ]             |
+| -f                                         | Überprüft ob die Datei eine reguläre Datei ist  | if [ -f $filename ]             |
+| -d                                         | Überprüft ob der Ordner existiert               | if [ -d $filename ]             |
+| -s                                         | Überprüft ob die Datei leer ist                 | if [ -s $filename ]             |
+| -r                                         | Überprüft ob die Datei leesbar ist              | if [ -r $filename ]             |
+| -w                                         | Überprüft ob die Datei beschreibbar ist         | if [ -w $filename ]             |
+| -x                                         | Überprüft ob die Datei ausführbar ist           | if [ -x $filename ]             |
+| Compound comparison [[]]                   |                                                 |                                 |
+| ||                                         | Oder                                            | if [[ $a == 1 || $b == 1]]      |
+| &&                                         | Und                                             | if [[ $a == 1 && $b == 1]]      |
+| !                                          | Ungleich                                        |                                 |
+| Compound comparison []                     |                                                 |                                 |
+| -o                                         | Oder                                            | if [ $n1 -gt 24 -o $n2 -lt 66 ] |
+| -a                                         | Und                                             | if [ $n1 -gt 24 -a $n2 -lt 66 ] |
+
+
+<table>
+    <tr>
+        <td>Operator</td>
+        <td>Beschreibung</td>
+        <td>Beispiel</td>
+    </tr>
+    <tr>
+        <td>Compare integers - single brackets []</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>-gt</td>
+        <td>Grösser wie</td>
+        <td>if [ "$a" -gt "$b" ]</td>
+    </tr>
+    <tr>
+        <td>-ge</td>
+        <td>Grösser oder gleich wie</td>
+        <td>if [ "$a" -ge "$b" ]</td>
+    </tr>
+    <tr>
+        <td>-lt</td>
+        <td>Kleiner wie</td>
+        <td>if [ "$a" -lt "$b" ]</td>
+    </tr>
+    <tr>
+        <td>-le</td>
+        <td>Kleiner oder gleich wie</td>
+        <td>if [ "$a" -le "$b" ]</td>
+    </tr>
+    <tr>
+        <td>-eq</td>
+        <td>Gleich</td>
+        <td>if [ "$a" -eq "$b" ]</td>
+    </tr>
+    <tr>
+        <td>-ne</td>
+        <td>Ungleich</td>
+        <td>if [ "$a" -ne "$b" ]</td>
+    </tr>
+    <tr>
+        <td>Compare integers - double parentheses (())</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>&gt;</td>
+        <td>Grösser wie</td>
+        <td>(("$a" &gt; "$b"))</td>
+    </tr>
+    <tr>
+        <td>&gt;=</td>
+        <td>Grösser oder gleich wie</td>
+        <td>(("$a" &gt;= "$b"))</td>
+    </tr>
+    <tr>
+        <td>&lt;</td>
+        <td>Kleiner wie</td>
+        <td>(("$a" &lt; "$b"))</td>
+    </tr>
+    <tr>
+        <td>&lt;=</td>
+        <td>Kleiner oder gleich wie</td>
+        <td>(("$a" &lt;= "$b"))</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>=</td>
+        <td>Gleich</td>
+        <td>if [ "$a" = "$b" ]</td>
+    </tr>
+    <tr>
+        <td>!=</td>
+        <td>Ungleich</td>
+        <td>if [ "$a" != "$b" ]</td>
+    </tr>
+    <tr>
+        <td>-z</td>
+        <td>Leerer String</td>
+        <td>if [ -z "$String" ]</td>
+    </tr>
+    <tr>
+        <td>-n</td>
+        <td>Not null </td>
+        <td>if [ -n "$String" ]</td>
+    </tr>
+    <tr>
+        <td>File Operators</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>-e</td>
+        <td>Überprüft ob die Datei / directory exists </td>
+        <td>if [ -e $filename ]</td>
+    </tr>
+    <tr>
+        <td>-f</td>
+        <td>Überprüft ob die Datei eine reguläre Datei ist </td>
+        <td>if [ -f $filename ]</td>
+    </tr>
+    <tr>
+        <td>-d</td>
+        <td>Überprüft ob der Ordner existiert </td>
+        <td>if [ -d $filename ]</td>
+    </tr>
+    <tr>
+        <td>-s</td>
+        <td>Überprüft ob die Datei leer ist</td>
+        <td>if [ -s $filename ]</td>
+    </tr>
+    <tr>
+        <td>-r</td>
+        <td>Überprüft ob die Datei leesbar ist</td>
+        <td>if [ -r $filename ]</td>
+    </tr>
+    <tr>
+        <td>-w</td>
+        <td>Überprüft ob die Datei beschreibbar ist</td>
+        <td>if [ -w $filename ]</td>
+    </tr>
+    <tr>
+        <td>-x</td>
+        <td>Überprüft ob die Datei ausführbar ist</td>
+        <td>if [ -x $filename ]</td>
+    </tr>
+    <tr>
+        <td>Compound comparison [[]]</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>||</td>
+        <td>Oder</td>
+        <td>if [[ $a == 1 || $b == 1]]</td>
+    </tr>
+    <tr>
+        <td>&amp;&amp;</td>
+        <td>Und</td>
+        <td>if [[ $a == 1 &amp;&amp; $b == 1]]</td>
+    </tr>
+    <tr>
+        <td>!</td>
+        <td>Ungleich</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Compound comparison []</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>-o</td>
+        <td>Oder</td>
+        <td>if [ $n1 -gt 24 -o $n2 -lt 66 ]</td>
+    </tr>
+    <tr>
+        <td>-a</td>
+        <td>Und</td>
+        <td>if [ $n1 -gt 24 -a $n2 -lt 66 ]</td>
+    </tr>
+</table>
