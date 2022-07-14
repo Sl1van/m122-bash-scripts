@@ -10,6 +10,8 @@
   - [Umgang mit Dateien](#umgang-mit-dateien)
     - [Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind](#durch-mehrere-argumente-iterieren-und-checken-ob-diese-eine-datei-oder-ein-ordner-sind)
     - [Zip Cracker:](#zip-cracker)
+      - [Master Script](#master-script)
+      - [Brute-Force Scripts](#brute-force-scripts)
     - [Text Processing](#text-processing)
   - [PID eines ausgeführten Befehls herausfinden](#pid-eines-ausgeführten-befehls-herausfinden)
   - [Best Practices](#best-practices)
@@ -27,7 +29,15 @@
 ## Basics
 
 ### Hello World
-TODO
+Ein Hello World in Bash sieht folgenderweise aus:
+```sh
+#!/bin/bash
+
+echo "Hello world"
+```
+Der Kommentar auf der ersten Zeile wird benützt um sicherzustellen, dass das Script auch wirklich mit bash läuft.
+
+Echo wird verwendet um einen Output in der Konsole zu kreieren.  
 
 
 ### Variable mit Strings verwenden:
@@ -87,7 +97,108 @@ done
 ```
 
 ### Zip Cracker:
-TODO
+Dieser Zip Cracker versucht mit einer Brute-Force-Attacke, aus der Zip-Datei "vollsicher.zip", ein 3-5 stelliges Passwort herauszufinden.
+
+Der Zip Cracker besteht aus mehreren Scripts:
+* Einem Script, welches die Ausführung und Beendung der anderen Scripts kontrolliert.
+* Scripts welche jeweils eine bestimmte Länge von Passwörter brute-forcen.
+
+#### Master Script
+```sh
+#!/bin/bash
+./unzipper3003.sh vollsicher.zip &
+threepid=$?
+./unzipper3004.sh vollsicher.zip &
+fourpid=$?
+./unzipper3005.sh vollsicher.zip &
+fivepid=$?
+
+while(true); do
+    echo "test"
+    if test -f "./password"; then
+        echo "the password of the cracked file is:"
+        cat ./password
+        rm -f ./password
+        kill $threepid
+        kill $fourpid
+        kill $fivepid
+        exit 0;
+    fi
+    if ! ps -p $threepid > /dev/null
+    then
+        if ! ps -p $fourpid > /dev/null
+        then
+            if ! ps -p $fivepid > /dev/null
+                then
+                if ! test -f "./password"; then
+                    echo "the password of the password protected file could not be found out"
+                    exit 1;
+                fi
+            fi
+        fi
+    fi
+    sleep 2
+done
+```
+
+#### Brute-Force Scripts
+```sh
+#!/bin/bash
+
+for char1 in {a..z} {0..9} ; do
+    for char2 in {a..z} {0..9} ; do
+        for char3 in {a..z} {0..9} ; do
+            unzip -oq -P "$char1$char2$char3" $1
+            if [ $? -eq 0 ]; then
+                touch ./password
+                echo "$char1$char2$char3" > ./password
+                exit 0
+            fi
+        done        
+    done
+done
+```
+
+```sh
+#!/bin/bash
+
+for char1 in {a..z} {0..9} ; do
+    for char2 in {a..z} {0..9} ; do
+        for char3 in {a..z} {0..9} ; do
+            for char4 in {a..z} {0..9} ; do
+                unzip -oq -P "$char1$char2$char3$char4" $1
+                if [ $? -eq 0 ]; then
+                    touch ./password
+                    echo "$char1$char2$char3$char4" > ./password
+                    exit 0
+                fi
+            done
+        done        
+    done
+done
+```
+
+```sh
+#!/bin/bash
+
+for char1 in {a..z} {0..9} ; do
+    for char2 in {a..z} {0..9} ; do
+        for char3 in {a..z} {0..9} ; do
+            for char4 in {a..z} {0..9} ; do
+                for char5 in {a..z} {0..9} ; do
+                    unzip -oq -P "$char1$char2$char3$char4$char5" $1
+                    if [ $? -eq 0 ]; then
+                        touch ./password
+                        echo "$char1$char2$char3$char4$char5" > ./password
+                        exit 0
+                    fi
+                done
+            done
+        done        
+    done
+done
+```
+
 
 ### Text Processing
 TODO

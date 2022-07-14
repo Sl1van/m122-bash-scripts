@@ -1,3 +1,5 @@
+#!/bin/bash
+
 for char1 in {a..z} {0..9} ; do
     for char2 in {a..z} {0..9} ; do
         for char3 in {a..z} {0..9} ; do

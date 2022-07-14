@@ -1,3 +1,4 @@
+#!/bin/bash
 ./unzipper3003.sh vollsicher.zip &
 threepid=$?
 ./unzipper3004.sh vollsicher.zip &
