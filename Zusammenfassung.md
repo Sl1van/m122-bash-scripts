@@ -13,14 +13,17 @@
     - [Zip Cracker:](#zip-cracker)
     - [Text Processing](#text-processing)
   - [PID eines ausgeführten Befehls herausfinden](#pid-eines-ausgeführten-befehls-herausfinden)
-  - [Weitere Tipps](#weitere-tipps)
+  - [Best Practices](#best-practices)
+    - [Runtime Fehler generieren](#runtime-fehler-generieren)
+    - [Mit trap checken, ob ein Script einen bestimmten Fehler warf](#mit-trap-checken-ob-ein-script-einen-bestimmten-fehler-warf)
+    - [Dedizierte Funktionen für das Logging verwenden](#dedizierte-funktionen-für-das-logging-verwenden)
     - [ShellCheck](#shellcheck)
-    - [Security-checkliste](#security-checkliste)
-      - [Utilities immer mit ihrem vollständigen Pfad aufrufen](#utilities-immer-mit-ihrem-vollständigen-pfad-aufrufen)
-      - [User Inputs nie direkt ausführen](#user-inputs-nie-direkt-ausführen)
-      - [Authentifizierung missbrauchen](#authentifizierung-missbrauchen)
-      - [Exit Status automatisch checken](#exit-status-automatisch-checken)
-      - [Bei nicht gesetzten Variablen das Script beenden](#bei-nicht-gesetzten-variablen-das-script-beenden)
+  - [Security-checkliste](#security-checkliste)
+    - [Utilities immer mit ihrem vollständigen Pfad aufrufen](#utilities-immer-mit-ihrem-vollständigen-pfad-aufrufen)
+    - [User Inputs nie direkt ausführen](#user-inputs-nie-direkt-ausführen)
+    - [Authentifizierung missbrauchen](#authentifizierung-missbrauchen)
+    - [Exit Status automatisch checken](#exit-status-automatisch-checken)
+    - [Bei nicht gesetzten Variablen das Script beenden](#bei-nicht-gesetzten-variablen-das-script-beenden)
 
 ## Basics
 
@@ -101,19 +104,57 @@ TODO
 
 
 ## PID eines ausgeführten Befehls herausfinden
-Mit `$!` findet man immmer heraus was die PID des zu letzt audgeführten Befehls ist.
+Mit `$!` findet man immer heraus was die PID des zuletzt ausgeführten Befehls ist.
 ```bash
 myCommand & echo $!
 ```
+## Best Practices
+### Runtime Fehler generieren
+Um Runtime Fehler frühzeitig zu erkennen können folgende flags mit `set`gesetzt werden, damit sich das Script beendet, sobald ein Fehler auftritt.
+```sh
+set -o errexit
+set -o nounset
+set -o pipefail
+```
+### Mit trap checken, ob ein Script einen bestimmten Fehler warf
+Mit `trap` fangen wir hier z.B. einen Fehler ab
+```sh
+function handle_exit() {
+    echo "exiting not cleanly...."
+    exit 1
+}
 
-## Weitere Tipps
+trap handle_exit 1
+```
+### Dedizierte Funktionen für das Logging verwenden
+Dedizierte Funktionen für das Logging machen das Logging übersichtlicher und simpler.
+```sh
+function __msg_error() {
+    [[ "${ERROR}" == "1" ]] && echo -e "[ERROR]: $*"
+}
+
+function __msg_debug() {
+    [[ "${DEBUG}" == "1" ]] && echo -e "[DEBUG]: $*"
+}
+
+function __msg_info() {
+    [[ "${INFO}" == "1" ]] && echo -e "[INFO]: $*"
+}
+
+function read_file() {
+  if ls imnotexisting; then
+    __msg_error "File not found"
+    return ${FILE_NOT_FOUND}
+  fi
+}
+```
 
 ### ShellCheck
 ShellCheck ist ein cli Tool um sicherzustellen das Bash-Scripts richtig geschrieben sind und hilft bessere Scripts zu schreiben. ShellCheck ist aber auch als Plugin für Vim, vscode und weitere IDEs vorhanden. 
 
-### Security-checkliste
+## Security-checkliste
 
-#### Utilities immer mit ihrem vollständigen Pfad aufrufen
+### Utilities immer mit ihrem vollständigen Pfad aufrufen
 Rufe Utilities immer mit ihrem vollständigen Pfad auf, insbesondere wenn das Script als root ausgeführt wird.
 
 Beispiel einer injection:
@@ -127,7 +168,7 @@ if [ "$USER" = "root" ] ; then
 fi
 ```
 
-#### User Inputs nie direkt ausführen
+### User Inputs nie direkt ausführen
 User Inputs sollen nie direkt ausgeführt werden, sondern immer zu strings umewandelt werden.
  
 Bei diesem Script ist solch eine Injection möglich.
@@ -146,7 +187,7 @@ Das Script kann man ganz einfach sichern, indem man den Input zu einem String um
 ```sh
 /bin/ls -l "$name"
 ```
-#### Authentifizierung missbrauchen
+### Authentifizierung missbrauchen
 ```sh
 if [ $USER = "root" ] ; then
     cd $HOME
@@ -158,7 +199,7 @@ Dieses Script kann aber einfach überlistet werden, indem man $USER überschreib
 ```sh
 "$(/usr/bin/id -u -n)"
 ```
-#### Exit Status automatisch checken
+### Exit Status automatisch checken
 Für kleine Scripts kann es sehr anstrngend sein jeden einzelnen Exit-Status zu kontrollieren. Mit folgendem Befehl wird das Script sich beenden nach einem nicht 0 Exit-Status.
 ```sh
 set -e
@@ -168,7 +209,7 @@ Dieses Flag kann man folgenderweise zurücksetzen:
 set +e
 ```
 
-#### Bei nicht gesetzten Variablen das Script beenden
+### Bei nicht gesetzten Variablen das Script beenden
 Bash speichert nicht vorhandene Variablen wie Leere. Dies kann zu Problemen führen, wenn man solch ein fehlerhaftes Script asuführt. Um sich gegen dieses Problem zu schützen kann man folgenden Befehl ausführen.
 
 ```sh
