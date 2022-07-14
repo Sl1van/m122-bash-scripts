@@ -3,9 +3,8 @@
 - [Zusammenfassung](#zusammenfassung)
   - [Basics](#basics)
     - [Hello World](#hello-world)
-    - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem)
+    - [Variable mit Strings verwenden:](#variable-mit-strings-verwenden)
     - [Mehre Linien in die Konsole ausgeben:](#mehre-linien-in-die-konsole-ausgeben)
-    - [Variable mit Strings verwendem:](#variable-mit-strings-verwendem-1)
     - [Input erhalten:](#input-erhalten)
   - [Zahlen Rater](#zahlen-rater)
   - [Umgang mit Dateien](#umgang-mit-dateien)
@@ -31,7 +30,7 @@
 TODO
 
 
-### Variable mit Strings verwendem:
+### Variable mit Strings verwenden:
 
 ```sh
 hostname=`hostname`
@@ -39,16 +38,9 @@ echo "Dieses Skript läuft auf $hostname."
 ```
 
 ### Mehre Linien in die Konsole ausgeben:
-Mit `\n` kann man Zeilen vonseinander trennen und somit mehrere Zeilen mit einem echo ausgeben.
+Mit `\n` kann man Zeilen voneinander trennen und somit mehrere Zeilen mit einem echo ausgeben.
 ```sh
 printf "Mensch\nBär\nSchwein\nHund\nKatze\nSchaf"
-```
-
-### Variable mit Strings verwendem:
-
-```sh
-echo "Enter file/directory name:"
-read file1
 ```
 
 ### Input erhalten:
@@ -158,7 +150,7 @@ ShellCheck ist ein cli Tool um sicherzustellen das Bash-Scripts richtig geschrie
 Rufe Utilities immer mit ihrem vollständigen Pfad auf, insbesondere wenn das Script als root ausgeführt wird.
 
 Beispiel einer injection:
-Der Benutzer will mit einem Script aufrufen welches ls benützt. In diesem ordner gibt es dann aber auch ein anderes Script welches auch ls heisst.
+Der Benutzer will mit einem Script aufrufen welches ls benützt. In diesem Ordner gibt es dann aber auch ein anderes Script welches auch ls heisst.
 
 ```sh
 #!/bin/sh
@@ -169,7 +161,7 @@ fi
 ```
 
 ### User Inputs nie direkt ausführen
-User Inputs sollen nie direkt ausgeführt werden, sondern immer zu strings umewandelt werden.
+User Inputs sollen nie direkt ausgeführt werden, sondern immer zu strings umgewandelt werden.
  
 Bei diesem Script ist solch eine Injection möglich.
 ```sh
@@ -193,14 +185,14 @@ if [ $USER = "root" ] ; then
     cd $HOME
 fi
 ```
-In diesem Script wird geprüft ob der jetztige user root ist.
+In diesem Script wird geprüft ob der jetzige user root ist.
 
 Dieses Script kann aber einfach überlistet werden, indem man $USER überschreibt. Darum sollte man immer mit folgendem Befehl den User kontrollieren:
 ```sh
 "$(/usr/bin/id -u -n)"
 ```
 ### Exit Status automatisch checken
-Für kleine Scripts kann es sehr anstrngend sein jeden einzelnen Exit-Status zu kontrollieren. Mit folgendem Befehl wird das Script sich beenden nach einem nicht 0 Exit-Status.
+Für kleine Scripts kann es sehr anstrengend sein jeden einzelnen Exit-Status zu kontrollieren. Mit folgendem Befehl wird das Script sich beenden nach einem nicht 0 Exit-Status.
 ```sh
 set -e
 ```
@@ -210,7 +202,7 @@ set +e
 ```
 
 ### Bei nicht gesetzten Variablen das Script beenden
-Bash speichert nicht vorhandene Variablen wie Leere. Dies kann zu Problemen führen, wenn man solch ein fehlerhaftes Script asuführt. Um sich gegen dieses Problem zu schützen kann man folgenden Befehl ausführen.
+Bash speichert nicht vorhandene Variablen wie Leere. Dies kann zu Problemen führen, wenn man solch ein fehlerhaftes Script ausgeführt. Um sich gegen dieses Problem zu schützen kann man folgenden Befehl ausführen.
 
 ```sh
 set -u
