@@ -11,6 +11,7 @@
   - [Umgang mit Dateien](#umgang-mit-dateien)
     - [Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind](#durch-mehrere-argumente-iterieren-und-checken-ob-diese-eine-datei-oder-ein-ordner-sind)
     - [Anzahl Dateien in Ordner zählen:](#anzahl-dateien-in-ordner-zählen)
+    - [Alte Dateien löschen](#alte-dateien-löschen)
     - [Zip Cracker:](#zip-cracker)
       - [Master Script](#master-script)
       - [Brute-Force Scripts](#brute-force-scripts)
@@ -21,6 +22,8 @@
     - [PID eines ausgeführten Befehls herausfinden](#pid-eines-ausgeführten-befehls-herausfinden)
   - [Fortgeschrittene Scripts](#fortgeschrittene-scripts)
     - [Dateien anhand der Dateiendung umbenennen](#dateien-anhand-der-dateiendung-umbenennen)
+    - [Backup erstellen und via scp auf einen anderen Server transportieren](#backup-erstellen-und-via-scp-auf-einen-anderen-server-transportieren)
+    - [Überprüfen ob server online ist](#überprüfen-ob-server-online-ist)
   - [Best Practices](#best-practices)
     - [Runtime Fehler generieren](#runtime-fehler-generieren)
     - [Mit trap checken, ob ein Script einen bestimmten Fehler warf](#mit-trap-checken-ob-ein-script-einen-bestimmten-fehler-warf)
@@ -32,6 +35,7 @@
     - [Authentifizierung missbrauchen](#authentifizierung-missbrauchen)
     - [Exit Status automatisch checken](#exit-status-automatisch-checken)
     - [Bei nicht gesetzten Variablen das Script beenden](#bei-nicht-gesetzten-variablen-das-script-beenden)
+  - [Cheatsheet von Operatoren](#cheatsheet-von-operatoren)
 
 ## Basics
 
@@ -41,6 +45,9 @@ Ein Hello World in Bash sieht folgenderweise aus:
 
 ```sh
 #!/bin/bash
+## Hello World
+## Author: Silvan Chervet
+## Datum: 19.14.2022
 
 echo "Hello world"
 ```
@@ -52,6 +59,11 @@ Echo wird verwendet um einen Output in der Konsole zu kreieren.
 ### Variable mit Strings verwenden:
 
 ```sh
+#!/bin/bash
+## Variable mit Strings verwenden
+## Author: Silvan Chervet
+## Datum: 02.06.2022
+
 hostname=`hostname`
 echo "Dieses Skript läuft auf $hostname."
 ```
@@ -61,6 +73,11 @@ echo "Dieses Skript läuft auf $hostname."
 Mit `\n` kann man Zeilen voneinander trennen und somit mehrere Zeilen mit einem echo ausgeben.
 
 ```sh
+#!/bin/bash
+## Mehre Linien in die Konsole ausgeben
+## Author: Silvan Chervet
+## Datum: 02.06.2022
+
 printf "Mensch\nBär\nSchwein\nHund\nKatze\nSchaf"
 ```
 
@@ -69,6 +86,11 @@ printf "Mensch\nBär\nSchwein\nHund\nKatze\nSchaf"
 Mit folgendem Script kann man einen einen Input abfragen und dann erneut ausgeben:
 
 ```sh
+#!/bin/bash
+## Input erhalten
+## Author: Silvan Chervet
+## Datum: 09.06.2022
+
 read input
 echo "$input"
 ```
@@ -76,6 +98,11 @@ echo "$input"
 ### Einen bestimmten Exit-Status generieren
 
 ```sh
+#!/bin/bash
+## Mehre Linien in die Konsole ausgeben
+## Author: Silvan Chervet
+## Datum: 09.06.2022
+
 echo “Dieses script wird mit exit status 1 beendet werden.”
 exit 1
 ```
@@ -85,6 +112,11 @@ exit 1
 Dies ist eine Zahlen Rater, welcher eine zufällige Zahl generiert und dann einen Input erwartet. Wenn der Benutzer die richtige Zahl ratet beendet sich das Spiel.
 
 ```sh
+#!/bin/bash
+## Zahlen Rater
+## Author: Silvan Chervet
+## Datum: 09.06.2022
+
 random_number=$((RANDOM%15+1)) #generate random number
 
 echo "Guess a input between 1 and 15:"
@@ -109,6 +141,12 @@ echo "You guessed the correct input"
 ### Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind
 
 ```sh
+#!/bin/bash
+## Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind
+## Author: Silvan Chervet
+## Datum: 09.06.2022
+
+
 for var in "$@"
 do
     if [[ -d $var ]]||[[ -f $var ]]; then #checks if $var is file or dir
@@ -123,6 +161,9 @@ done
 
 ```sh
 #!/bin/bash
+## Durch mehrere Argumente iterieren und checken ob diese eine Datei oder ein Ordner sind
+## Author: Silvan Chervet
+## Datum: 09.06.2022
 
 function countFiles()
  {
@@ -130,6 +171,21 @@ function countFiles()
     echo "$NUMBER_OF_FILES"
  }
 countFiles
+```
+
+### Alte Dateien löschen
+```sh
+#!/bin/bash
+## Alte Dateien löschen
+## Author: Silvan Chervet
+## Datum: 07.07.2022
+
+path="."
+currentTime=$(date +%Y%m%d_%H%M%S)    
+log=$path
+days=10
+
+find $path -type f -mtime +$days -delete
 ```
 
 ### Zip Cracker:
@@ -145,6 +201,10 @@ Der Zip Cracker besteht aus mehreren Scripts:
 
 ```sh
 #!/bin/bash
+## Zip Cracker
+## Author: Silvan Chervet
+## Datum: 23.06.2022
+
 ./unzipper3003.sh vollsicher.zip &
 threepid=$?
 ./unzipper3004.sh vollsicher.zip &
@@ -184,6 +244,9 @@ done
 
 ```sh
 #!/bin/bash
+## Zip Cracker
+## Author: Silvan Chervet
+## Datum: 23.06.2022
 
 for char1 in {a..z} {0..9} ; do
     for char2 in {a..z} {0..9} ; do
@@ -201,6 +264,9 @@ done
 
 ```sh
 #!/bin/bash
+## Zip Cracker
+## Author: Silvan Chervet
+## Datum: 23.06.2022
 
 for char1 in {a..z} {0..9} ; do
     for char2 in {a..z} {0..9} ; do
@@ -220,6 +286,9 @@ done
 
 ```sh
 #!/bin/bash
+## Zip Cracker
+## Author: Silvan Chervet
+## Datum: 23.06.2022
 
 for char1 in {a..z} {0..9} ; do
     for char2 in {a..z} {0..9} ; do
@@ -262,6 +331,9 @@ Mit diesem Script werden mehrere an einer Tarifliste vorgenommen damit diese dan
 
 ```sh
 #!/bin/bash
+## Tarifliste umgestalten
+## Author: Silvan Chervet
+## Datum: 24.06.2022
 
 if [ -z $1 ]; then
     echo "input wasn't set exiting...";
@@ -287,6 +359,11 @@ grep -a -w "^2" $1 | grep -a -v -w "^2\t26" | cut -f3-4 | grep -a -v "[A-Z][0-9]
 Mit `$!` findet man immer heraus was die PID des zuletzt ausgeführten Befehls ist.
 
 ```bash
+#!/bin/bash
+## PID eines ausgeführten Befehls herausfinden
+## Author: Silvan Chervet
+## Datum: 23.06.2022
+
 myCommand & echo $!
 ```
 
@@ -295,6 +372,11 @@ myCommand & echo $!
 ### Dateien anhand der Dateiendung umbenennen
 
 ```sh
+#!/bin/bash
+## Dateien anhand der Dateiendung umbenennen
+## Author: Silvan Chervet
+## Datum: 30.06.2022
+
 function rename_files_custom {
   for file in *; do
     if [ -f $file ]; then
@@ -316,6 +398,42 @@ read extension
 echo "Please enter a custom prefix or leave empty"
 read prefix
 rename_files_custom $extension $prefix
+```
+
+### Backup erstellen und via scp auf einen anderen Server transportieren
+```sh
+#!/bin/bash
+## X
+## Author: Silvan Chervet
+## Datum: 07.07.2022
+
+zip -r backup.zip $1
+
+today=date+'%m/%d/%Y'
+scp remote_username@10.10.0.2:/backups/$today.txt backup.zip
+```
+
+### Überprüfen ob server online ist
+```sh
+#!/bin/bash
+## X
+## Author: Silvan Chervet
+## Datum: 07.07.2022
+
+logging=false
+
+ping $1 -c 1
+if [ $? -eq 0 ]; then
+    if "$logging" = true; then
+        echo "server is online" > log.txt
+    fi
+    echo "server is online"
+else
+    if "$logging" = true; then
+        echo "server is offline" > log.txt
+    fi
+    echo "server is offline"
+fi
 ```
 
 ## Best Practices
@@ -458,18 +576,18 @@ Dieses Flag kann man folgenderweise zurücksetzen:
 set +u
 ```
 
-https://tableconvert.com/excel-to-markdown
+## Cheatsheet von Operatoren
 
 | Operator                                   | Beschreibung                                    | Beispiel                        |
 |--------------------------------------------|-------------------------------------------------|---------------------------------|
-| Compare integers - single brackets []      |                                                 |                                 |
+| Integers vergleichen mit []      |                                                 |                                 |
 | -gt                                        | Grösser wie                                     | if [ "$a" -gt "$b" ]            |
 | -ge                                        | Grösser oder gleich wie                         | if [ "$a" -ge "$b" ]            |
 | -lt                                        | Kleiner wie                                     | if [ "$a" -lt "$b" ]            |
 | -le                                        | Kleiner oder gleich wie                         | if [ "$a" -le "$b" ]            |
 | -eq                                        | Gleich                                          | if [ "$a" -eq "$b" ]            |
 | -ne                                        | Ungleich                                        | if [ "$a" -ne "$b" ]            |
-| Compare integers - double parentheses (()) |                                                 |                                 |
+| Integers vergleichen mit (()) |                                                 |                                 |
 | >                                          | Grösser wie                                     | (("$a" > "$b"))                 |
 | >=                                         | Grösser oder gleich wie                         | (("$a" >= "$b"))                |
 | <                                          | Kleiner wie                                     | (("$a" < "$b"))                 |
@@ -479,187 +597,18 @@ https://tableconvert.com/excel-to-markdown
 | !=                                         | Ungleich                                        | if [ "$a" != "$b" ]             |
 | -z                                         | Leerer String                                   | if [ -z "$String" ]             |
 | -n                                         | Not null                                        | if [ -n "$String" ]             |
-| File Operators                             |                                                 |                                 |
+| File Operatoren                             |                                                 |                                 |
 | -e                                         | Überprüft ob die Datei / directory exists       | if [ -e $filename ]             |
 | -f                                         | Überprüft ob die Datei eine reguläre Datei ist  | if [ -f $filename ]             |
 | -d                                         | Überprüft ob der Ordner existiert               | if [ -d $filename ]             |
 | -s                                         | Überprüft ob die Datei leer ist                 | if [ -s $filename ]             |
-| -r                                         | Überprüft ob die Datei leesbar ist              | if [ -r $filename ]             |
+| -r                                         | Überprüft ob die Datei lesbar ist              | if [ -r $filename ]             |
 | -w                                         | Überprüft ob die Datei beschreibbar ist         | if [ -w $filename ]             |
 | -x                                         | Überprüft ob die Datei ausführbar ist           | if [ -x $filename ]             |
-| Compound comparison [[]]                   |                                                 |                                 |
+| Mehrere Operatoren verbinden [[]]                   |                                                 |                                 |
 | ||                                         | Oder                                            | if [[ $a == 1 || $b == 1]]      |
 | &&                                         | Und                                             | if [[ $a == 1 && $b == 1]]      |
 | !                                          | Ungleich                                        |                                 |
-| Compound comparison []                     |                                                 |                                 |
+| Mehrere Operatoren verbinden []                     |                                                 |                                 |
 | -o                                         | Oder                                            | if [ $n1 -gt 24 -o $n2 -lt 66 ] |
 | -a                                         | Und                                             | if [ $n1 -gt 24 -a $n2 -lt 66 ] |
-
-
-<table>
-    <tr>
-        <td>Operator</td>
-        <td>Beschreibung</td>
-        <td>Beispiel</td>
-    </tr>
-    <tr>
-        <td>Compare integers - single brackets []</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>-gt</td>
-        <td>Grösser wie</td>
-        <td>if [ "$a" -gt "$b" ]</td>
-    </tr>
-    <tr>
-        <td>-ge</td>
-        <td>Grösser oder gleich wie</td>
-        <td>if [ "$a" -ge "$b" ]</td>
-    </tr>
-    <tr>
-        <td>-lt</td>
-        <td>Kleiner wie</td>
-        <td>if [ "$a" -lt "$b" ]</td>
-    </tr>
-    <tr>
-        <td>-le</td>
-        <td>Kleiner oder gleich wie</td>
-        <td>if [ "$a" -le "$b" ]</td>
-    </tr>
-    <tr>
-        <td>-eq</td>
-        <td>Gleich</td>
-        <td>if [ "$a" -eq "$b" ]</td>
-    </tr>
-    <tr>
-        <td>-ne</td>
-        <td>Ungleich</td>
-        <td>if [ "$a" -ne "$b" ]</td>
-    </tr>
-    <tr>
-        <td>Compare integers - double parentheses (())</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>&gt;</td>
-        <td>Grösser wie</td>
-        <td>(("$a" &gt; "$b"))</td>
-    </tr>
-    <tr>
-        <td>&gt;=</td>
-        <td>Grösser oder gleich wie</td>
-        <td>(("$a" &gt;= "$b"))</td>
-    </tr>
-    <tr>
-        <td>&lt;</td>
-        <td>Kleiner wie</td>
-        <td>(("$a" &lt; "$b"))</td>
-    </tr>
-    <tr>
-        <td>&lt;=</td>
-        <td>Kleiner oder gleich wie</td>
-        <td>(("$a" &lt;= "$b"))</td>
-    </tr>
-    <tr>
-        <td>String</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>=</td>
-        <td>Gleich</td>
-        <td>if [ "$a" = "$b" ]</td>
-    </tr>
-    <tr>
-        <td>!=</td>
-        <td>Ungleich</td>
-        <td>if [ "$a" != "$b" ]</td>
-    </tr>
-    <tr>
-        <td>-z</td>
-        <td>Leerer String</td>
-        <td>if [ -z "$String" ]</td>
-    </tr>
-    <tr>
-        <td>-n</td>
-        <td>Not null </td>
-        <td>if [ -n "$String" ]</td>
-    </tr>
-    <tr>
-        <td>File Operators</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>-e</td>
-        <td>Überprüft ob die Datei / directory exists </td>
-        <td>if [ -e $filename ]</td>
-    </tr>
-    <tr>
-        <td>-f</td>
-        <td>Überprüft ob die Datei eine reguläre Datei ist </td>
-        <td>if [ -f $filename ]</td>
-    </tr>
-    <tr>
-        <td>-d</td>
-        <td>Überprüft ob der Ordner existiert </td>
-        <td>if [ -d $filename ]</td>
-    </tr>
-    <tr>
-        <td>-s</td>
-        <td>Überprüft ob die Datei leer ist</td>
-        <td>if [ -s $filename ]</td>
-    </tr>
-    <tr>
-        <td>-r</td>
-        <td>Überprüft ob die Datei leesbar ist</td>
-        <td>if [ -r $filename ]</td>
-    </tr>
-    <tr>
-        <td>-w</td>
-        <td>Überprüft ob die Datei beschreibbar ist</td>
-        <td>if [ -w $filename ]</td>
-    </tr>
-    <tr>
-        <td>-x</td>
-        <td>Überprüft ob die Datei ausführbar ist</td>
-        <td>if [ -x $filename ]</td>
-    </tr>
-    <tr>
-        <td>Compound comparison [[]]</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>||</td>
-        <td>Oder</td>
-        <td>if [[ $a == 1 || $b == 1]]</td>
-    </tr>
-    <tr>
-        <td>&amp;&amp;</td>
-        <td>Und</td>
-        <td>if [[ $a == 1 &amp;&amp; $b == 1]]</td>
-    </tr>
-    <tr>
-        <td>!</td>
-        <td>Ungleich</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Compound comparison []</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>-o</td>
-        <td>Oder</td>
-        <td>if [ $n1 -gt 24 -o $n2 -lt 66 ]</td>
-    </tr>
-    <tr>
-        <td>-a</td>
-        <td>Und</td>
-        <td>if [ $n1 -gt 24 -a $n2 -lt 66 ]</td>
-    </tr>
-</table>
